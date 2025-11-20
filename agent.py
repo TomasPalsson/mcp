@@ -5,7 +5,7 @@ import time
 import urllib.parse
 from typing import Any, Dict, List, Optional
 import requests
-import jwt  # kept in case you want to inspect claims
+import jwt  
 import boto3
 from botocore.config import Config
 from fastmcp import Client as MCPClient
@@ -112,14 +112,6 @@ def _interactive_oidc_login() -> dict:
     token_resp.raise_for_status()
     tok = token_resp.json()
     _save_cached_token(tok)
-
-    # Optional: print claims for debugging
-    try:
-        id_claims = jwt.decode(tok["id_token"], options={"verify_signature": False})
-        log("ℹ", f"ID token claims: {id_claims}", GRAY)
-    except Exception:
-        pass
-
     print(f"{GREEN}✔ OIDC login successful{RESET}")
     return tok
 
@@ -137,7 +129,6 @@ def get_user_jwt() -> str:
     return tok["access_token"]
 
 
-# ── Helpers ────────────────────────────────────────────────────────────────────
 def _json_objectize(value: Any) -> Dict[str, Any]:
     if isinstance(value, dict):
         return value
@@ -150,7 +141,6 @@ def _json_objectize(value: Any) -> Dict[str, Any]:
         return {"result": str(value)}
 
 
-# ── MCP Tool Catalog ───────────────────────────────────────────────────────────
 class MCPToolCatalog:
     def __init__(self, mcp_source: Any, auth: Optional[str] = None, prefix: Optional[str] = None):
         self._src = mcp_source
@@ -239,7 +229,6 @@ class MCPToolCatalog:
         return {"result": "\n".join(t for t in texts if t) if texts else None}
 
 
-# ── Bedrock Agent ──────────────────────────────────────────────────────────────
 class BedrockMCPAgent:
     def __init__(
         self,
@@ -335,7 +324,6 @@ class BedrockMCPAgent:
         return result
 
 
-# ── Main ───────────────────────────────────────────────────────────────────────
 async def main():
     log("▶", "Starting Bedrock MCP Agent", CYAN)
 
@@ -355,7 +343,6 @@ When you get a google auth url, you will write it out exactly to the user so the
 
     print(mcp_source)
 
-    # Get a user JWT (id_token) for the Cognito user
     user_jwt = get_user_jwt()
     print("USING TOKEN:", user_jwt[:40], "...")
     print("CLAIMS:", jwt.decode(user_jwt, options={"verify_signature": False}))
