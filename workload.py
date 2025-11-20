@@ -42,7 +42,7 @@ class Workload:
         try:
             url = await self.get_oauth_url(
                 provider_name="google-oauth-client-fsllt",
-                scopes=["https://www.googleapis.com/auth/drive.metadata.readonly"],
+                scopes=["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/documents"],
                 auth_flow="USER_FEDERATION",
                 callback_url="https://api.tomasp.me/redirect",
                 force_authentication=True,
@@ -148,8 +148,8 @@ class Workload:
 
             google_access_token = await self.client.get_token(
                 provider_name="google-oauth-client-fsllt",
+                scopes=["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/documents"],
                 agent_identity_token=agent_token,
-                scopes=["https://www.googleapis.com/auth/drive.metadata.readonly"],
                 auth_flow="USER_FEDERATION",
                 force_authentication=False,
             )
@@ -160,8 +160,8 @@ class Workload:
             # If token is not found or expired, return authorization URL
             authorization_url = await self.get_oauth_url(
                 provider_name="google-oauth-client-fsllt",
-                scopes=["https://www.googleapis.com/auth/drive.metadata.readonly"],
                 auth_flow="USER_FEDERATION",
+                scopes=["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/documents"],
                 callback_url=self.callback_url,
                 force_authentication=True,
             )

@@ -9,7 +9,6 @@ import jwt
 import boto3
 from botocore.config import Config
 from fastmcp import Client as MCPClient
-from fastmcp.client.transports import StreamableHttpTransport
 from dotenv import load_dotenv
 
 RESET  = "\033[0m"
@@ -214,7 +213,7 @@ class MCPToolCatalog:
             raise ValueError(f"Unknown MCP tool: {tool_name}")
         try:
             res = await self._ctx_client.call_tool(entry["original_name"], arguments or {})
-            print(f"{GRAY}[{_ts()}]{RESET} {GREEN}✔ Call succeeded{RESET}")
+            print(f"{GRAY}[{_ts()}]{RESET} {GREEN}✔ Call succeeded{RESET} Result {res}")
         except Exception as e:
             print(f"{GRAY}[{_ts()}]{RESET} {YELLOW}⚠ Tool call failed, retrying... ({e}){RESET}")
             await self._refresh_client()
@@ -337,8 +336,7 @@ async def main():
     region = "eu-west-1"
     mcp_source = f"https://bedrock-agentcore.{region}.amazonaws.com/runtimes/{encoded}/invocations?qualifier=DEFAULT"
     system = """
-You are an advanced AI assistant that can call various tools to help answer user questions.
-When you get a google auth url, you will write it out exactly to the user so the user can click it.
+    You are a helpful AI assistant that can use various tools to assist the user.
     """
 
     user_jwt = get_user_jwt()
