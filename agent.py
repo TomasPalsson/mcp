@@ -214,7 +214,7 @@ class MCPToolCatalog:
             raise ValueError(f"Unknown MCP tool: {tool_name}")
         try:
             res = await self._ctx_client.call_tool(entry["original_name"], arguments or {})
-            print(f"{GRAY}[{_ts()}]{RESET} {GREEN}✔ Call succeeded{RESET} Response: {res}")
+            print(f"{GRAY}[{_ts()}]{RESET} {GREEN}✔ Call succeeded{RESET}")
         except Exception as e:
             print(f"{GRAY}[{_ts()}]{RESET} {YELLOW}⚠ Tool call failed, retrying... ({e}){RESET}")
             await self._refresh_client()
@@ -341,12 +341,7 @@ You are an advanced AI assistant that can call various tools to help answer user
 When you get a google auth url, you will write it out exactly to the user so the user can click it.
     """
 
-    print(mcp_source)
-
     user_jwt = get_user_jwt()
-    print("USING TOKEN:", user_jwt[:40], "...")
-    print("CLAIMS:", jwt.decode(user_jwt, options={"verify_signature": False}))
-
 
     async with MCPToolCatalog(mcp_source=mcp_source, auth=user_jwt) as catalog:
         agent = BedrockMCPAgent(model_id=model_id, mcp_catalog=catalog, system_prompt=system)

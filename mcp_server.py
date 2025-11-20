@@ -19,6 +19,7 @@ class DriveToolset(Toolset):
     async def get_google_auth_url(self) -> dict:
         """
         Get Google OAuth authorization URL.
+        You need to send the user to this URL to authorize access.
         """
         return await self.workload.get_google_auth_url()
     
